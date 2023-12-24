@@ -5,6 +5,7 @@ from comfy import model_management
 import os
 from .arch.dat_arch import DAT
 from .arch.craft_arch import CRAFT
+from .arch.swinfir_arch import SwinFIR
 import wget
 
 
@@ -21,6 +22,9 @@ class SudoLatentUpscale:
 
         self.dtype = torch.float32
         self.weight_path = {
+            "SwinFIR4x6_mse": os.path.join(
+                self.local_dir, self.path, "SwinFIR4x6_mse_200k.pth"
+            ),
             "CRAFT7x6_l1_eV2-b0": os.path.join(
                 self.local_dir, self.path, "CRAFT7x6_l1_eV2-b0_150k.pth"
             ),
@@ -52,6 +56,7 @@ class SudoLatentUpscale:
                 "latent": ("LATENT",),
                 "version": (
                     [
+                        "SwinFIR4x6_mse",
                         "CRAFT7x6_l1_eV2-b0",
                         "DAT6x6_l1_eV2-b0",
                         "DAT12x6_l1_eV2-b0_contextual",
@@ -134,6 +139,30 @@ class SudoLatentUpscale:
                     img_range=1.0,
                     upsampler="",
                     resi_connection="1conv",
+                )
+
+            # 3.8 M
+            if version == "SwinFIR4x6_mse":
+                self.model = SwinFIR(
+                    patch_size=1,
+                    in_chans=4,
+                    embed_dim=96,
+                    depths=[6, 6, 6, 6],
+                    num_heads=[6, 6, 6, 6],
+                    window_size=8,
+                    mlp_ratio=4.0,
+                    qkv_bias=True,
+                    qk_scale=None,
+                    drop_rate=0.0,
+                    attn_drop_rate=0.0,
+                    drop_path_rate=0.1,
+                    ape=False,
+                    patch_norm=True,
+                    use_checkpoint=False,
+                    upscale=2,
+                    img_range=1.0,
+                    upsampler="pixelshuffle",
+                    resi_connection="SFB",
                 )
 
             self.model.load_state_dict(state_dict)
