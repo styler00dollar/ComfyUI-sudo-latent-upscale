@@ -3,7 +3,7 @@
 This took heavy inspriration from [city96/SD-Latent-Upscaler](https://github.com/city96/SD-Latent-Upscaler) and [Ttl/ComfyUi_NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale). Directly upscaling inside the latent space. 
 Model was trained for SD1.5 and drawn content. Might add new architectures or update models at some point.
 
-![comparison](https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale/assets/51405565/3b0b8a99-9515-4405-8d8b-fc285bb2fdd4)
+![comparison](https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale/assets/51405565/9bae2125-9ffd-482c-aca5-023ab1e304b4)
 
 First row is upscaled rgb image from rgb models before being used in vae encode or vae decoded image for latent models, second row final output after second KSampler.
 
@@ -56,3 +56,9 @@ with torch.inference_mode():
 - [GRL](https://github.com/ofsoundof/GRL-Image-Restoration) did not converge.
   
  ![grl](https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale/assets/51405565/3ceba02f-2f0d-4872-8fc3-fc930785658a)
+
+- SwinFIR with Prodigy 1 and Prodigy 0.1 caused massive instability. Images from my Prodigy 1, l1 and EfficientnetV2-b0 attempt.
+
+![graphs](https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale/assets/51405565/957aff0b-8670-471e-8f10-4231426a87c2)
+
+![swinfir_prodigy](https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale/assets/51405565/5c010b34-3b6e-4188-a561-e013bd52f185)
