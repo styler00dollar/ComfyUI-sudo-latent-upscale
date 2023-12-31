@@ -17,7 +17,7 @@ a self-made 4-channel latent classification network as a feature extractor. Trai
 
 Similar settings got applied to [CRAFT](https://github.com/AVC2-UESTC/CRAFT-SR) and I trained with batch size 16. I did not finetune CRAFT with contextual loss yet.
 
-I then tried to train [SwinFIR](https://github.com/Zdafeng/SwinFIR). Prodigy with 1 and 0.1 caused massive instability, so I used Lamb with 3e-4, batch size 150, bf16 and MSE with 0.08. Final model was trained on 2x4090 with ddp and gloo, 95k steps each gpu.
+I then tried to train [SwinFIR](https://github.com/Zdafeng/SwinFIR). Prodigy with 1 and 0.1 caused massive instability, so I used Lamb with 3e-4, batch size 150, bf16 and MSE with 0.08. Final model was trained on 2x4090 with ddp and gloo, 100k steps each gpu.
 
 ### Further Ideas
 Ideas I might test in the future:
