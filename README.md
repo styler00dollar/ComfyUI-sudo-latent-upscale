@@ -13,9 +13,11 @@ I tried to take promising networks from already existing papers and apply more e
 with 0.1, bf16, L1 loss with a factor of 0.08 and batch size 32 for the normal model and 16 for the large model. Training takes around 22-24gb vram and was done on a 4090. I did not try 
 vae decode inside training a lot, but if someone wants to train with it, use `torch.inference_mode()` to drastically reduce vram usage since vae does not get trained anyway. After training 
 with a discriminator and l1, I applied [contextual loss](https://github.com/styler00dollar/Colab-traiNNer/blob/a8d97b4826c01d7b206e7a320156d8666db1efd2/code/loss/loss.py#L715) which used 
-a self-made 4-channel latent classification network as a feature extractor. Training with contextual loss from scratch takes too long to converge, so I only used it at the very end.
+a self-made 4-channel latent classification network as a feature extractor. Training with contextual loss from scratch takes too long to converge, so I only used it at the very end. I can't really recommend the usage of contextual loss though.
 
 Similar settings got applied to [CRAFT](https://github.com/AVC2-UESTC/CRAFT-SR) and I trained with batch size 16. I did not finetune CRAFT with contextual loss yet.
+
+I then tried to train [SwinFIR](https://github.com/Zdafeng/SwinFIR). Prodigy with 1 and 0.1 caused massive instability, so I used Lamb with 3e-4, batch size 150, bf16 and MSE with 0.08. Final model was trained on 2x4090 with ddp and gloo, 95k steps each gpu.
 
 ### Further Ideas
 Ideas I might test in the future:
