@@ -1,7 +1,7 @@
 # ComfyUI-sudo-latent-upscale
 
 This took heavy inspriration from [city96/SD-Latent-Upscaler](https://github.com/city96/SD-Latent-Upscaler) and [Ttl/ComfyUi_NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale). Directly upscaling inside the latent space. 
-Model was trained for SD1.5 and drawn content. Might add new architectures or update models at some point.
+Some models are for 1.5 and some models are for SDXL. All models are trained for drawn content. Might add new architectures or update models at some point. I recommend the SwinFIR models.
 
 ![comparison](https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale/assets/51405565/9bae2125-9ffd-482c-aca5-023ab1e304b4)
 
@@ -18,6 +18,8 @@ a self-made 4-channel latent classification network as a feature extractor. Trai
 Similar settings got applied to [CRAFT](https://github.com/AVC2-UESTC/CRAFT-SR) and I trained with batch size 16. I did not finetune CRAFT with contextual loss yet.
 
 I then tried to train [SwinFIR](https://github.com/Zdafeng/SwinFIR). Prodigy with 1 and 0.1 caused massive instability, so I used Lamb with 3e-4, batch size 150, bf16 and MSE with 0.08. Final model was trained on 2x4090 with ddp and gloo, 100k steps each gpu.
+
+For SDXL, I used Prodigy with 0.1, batch 140 and bf16. One model was trained with MSE and the other was trained with FFT and L1. Used weight 1 everywhere.
 
 ### Further Ideas
 Ideas I might test in the future:
@@ -64,3 +66,4 @@ with torch.inference_mode():
 ![graphs](https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale/assets/51405565/957aff0b-8670-471e-8f10-4231426a87c2)
 
 ![swinfir_prodigy](https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale/assets/51405565/5c010b34-3b6e-4188-a561-e013bd52f185)
+

@@ -2,7 +2,6 @@
 import torch
 import torch.nn as nn
 import torch.utils.checkpoint as checkpoint
-from torch import Tensor
 from torch.nn import functional as F
 
 from timm.models.layers import DropPath, trunc_normal_

@@ -22,17 +22,23 @@ class SudoLatentUpscale:
 
         self.dtype = torch.float32
         self.weight_path = {
-            "SwinFIR4x6_mse": os.path.join(
-                self.local_dir, self.path, "SwinFIR4x6_mse_200k.pth"
+            "SwinFIR4x6_mse_1.5": os.path.join(
+                self.local_dir, self.path, "SwinFIR4x6_mse_200k_1.5.pth"
             ),
-            "CRAFT7x6_l1_eV2-b0": os.path.join(
-                self.local_dir, self.path, "CRAFT7x6_l1_eV2-b0_150k.pth"
+            "CRAFT7x6_l1_eV2-b0_1.5": os.path.join(
+                self.local_dir, self.path, "CRAFT7x6_l1_eV2-b0_150k_1.5.pth"
             ),
-            "DAT6x6_l1_eV2-b0": os.path.join(
-                self.local_dir, self.path, "DAT6x6_l1_eV2-b0_265k.pth"
+            "DAT6x6_l1_eV2-b0_1.5": os.path.join(
+                self.local_dir, self.path, "DAT6x6_l1_eV2-b0_265k_1.5.pth"
             ),
-            "DAT12x6_l1_eV2-b0_contextual": os.path.join(
-                self.local_dir, self.path, "DAT12x6_l1_eV2-b0_contextual_315k.pth"
+            "DAT12x6_l1_eV2-b0_contextual_1.5": os.path.join(
+                self.local_dir, self.path, "DAT12x6_l1_eV2-b0_contextual_315k_1.5.pth"
+            ),
+            "SwinFIR4x6_mse_xl": os.path.join(
+                self.local_dir, self.path, "SwinFIR4x6_mse_64k_sdxl.pth"
+            ),
+            "SwinFIR4x6_fft_l1_xl": os.path.join(
+                self.local_dir, self.path, "SwinFIR4x6_fft_l1_94k_sdxl.pth"
             ),
         }
         self.version = "none"
@@ -56,10 +62,12 @@ class SudoLatentUpscale:
                 "latent": ("LATENT",),
                 "version": (
                     [
-                        "SwinFIR4x6_mse",
-                        "CRAFT7x6_l1_eV2-b0",
-                        "DAT6x6_l1_eV2-b0",
-                        "DAT12x6_l1_eV2-b0_contextual",
+                        "SwinFIR4x6_mse_1.5",
+                        "CRAFT7x6_l1_eV2-b0_1.5",
+                        "DAT6x6_l1_eV2-b0_1.5",
+                        "DAT12x6_l1_eV2-b0_contextual_1.5",
+                        "SwinFIR4x6_mse_xl",
+                        "SwinFIR4x6_fft_l1_xl",
                     ],
                 ),
             },
@@ -81,7 +89,7 @@ class SudoLatentUpscale:
             state_dict = torch.load(self.weight_path[version])
 
             # 24.4 M
-            if version == "DAT6x6_l1_eV2-b0":
+            if version == "DAT6x6_l1_eV2-b0_1.5":
                 self.model = DAT(
                     img_size=64,
                     in_chans=4,
@@ -103,7 +111,7 @@ class SudoLatentUpscale:
                 )
 
             # 47.9 M
-            if version == "DAT12x6_l1_eV2-b0_contextual":
+            if version == "DAT12x6_l1_eV2-b0_contextual_1.5":
                 self.model = DAT(
                     img_size=64,
                     in_chans=4,
@@ -125,7 +133,7 @@ class SudoLatentUpscale:
                 )
 
             # 46.1M
-            if version == "CRAFT7x6_l1_eV2-b0":
+            if version == "CRAFT7x6_l1_eV2-b0_1.5":
                 self.model = CRAFT(
                     in_chans=4,
                     embed_dim=180,
@@ -142,7 +150,7 @@ class SudoLatentUpscale:
                 )
 
             # 3.8 M
-            if version == "SwinFIR4x6_mse":
+            if version in ["SwinFIR4x6_mse_1.5", "SwinFIR4x6_mse_xl", "SwinFIR4x6_fft_l1_xl"]:
                 self.model = SwinFIR(
                     patch_size=1,
                     in_chans=4,

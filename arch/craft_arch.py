@@ -1,7 +1,5 @@
 # https://github.com/AVC2-UESTC/CRAFT-SR/blob/main/basicsr/archs/craft_arch.py
 # https://github.com/XPixelGroup/BasicSR/blob/033cd6896d898fdd3dcda32e3102a792efa1b8f4/basicsr/archs/arch_util.py#L272
-import sys
-import os
 
 import torch
 import torch.nn as nn

@@ -7,8 +7,6 @@ import torch.nn as nn
 import torch.utils.checkpoint as checkpoint
 import collections
 import math
-import torch
-import torch.nn as nn
 from einops import rearrange
 from torch.nn.init import trunc_normal_
 from itertools import repeat
@@ -799,7 +797,7 @@ class FourierUnit(nn.Module):
     def forward(self, x):
         batch = x.shape[0]
 
-        r_size = x.size()
+        x.size()
         # (batch, c, h, w/2+1, 2)
         fft_dim = (-2, -1)
         ffted = torch.fft.rfftn(x, dim=fft_dim, norm=self.fft_norm)
@@ -1306,7 +1304,6 @@ class SwinFIR(nn.Module):
         **kwargs,
     ):
         super(SwinFIR, self).__init__()
-        num_in_ch = in_chans
         num_out_ch = in_chans
         num_feat = 64
         self.img_range = img_range
@@ -1460,7 +1457,6 @@ class SwinFIR(nn.Module):
         return x
 
     def forward(self, x):
-        input = x
         self.mean = self.mean.type_as(x)
         x = (x - self.mean) * self.img_range
 
