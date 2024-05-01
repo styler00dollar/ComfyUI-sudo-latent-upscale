@@ -6,6 +6,7 @@ import os
 from .arch.dat_arch import DAT
 from .arch.craft_arch import CRAFT
 from .arch.swinfir_arch import SwinFIR
+from .arch.drct_arch import drct
 import wget
 
 
@@ -40,6 +41,12 @@ class SudoLatentUpscale:
             "SwinFIR4x6_fft_l1_xl": os.path.join(
                 self.local_dir, self.path, "SwinFIR4x6_fft_l1_94k_sdxl.pth"
             ),
+            "DRCT-l_12x6_325k_l1_xl": os.path.join(
+                self.local_dir, self.path, "DRCT-l_12x6_325k_l1_sdxl.pth"
+            ),
+            "DRCTFIR-l_12x6_215k_l1_xl": os.path.join(
+                self.local_dir, self.path, "DRCTFIR-l_12x6_215k_l1_sdxl.pth"
+            ),
         }
         self.version = "none"
 
@@ -68,6 +75,8 @@ class SudoLatentUpscale:
                         "DAT12x6_l1_eV2-b0_contextual_1.5",
                         "SwinFIR4x6_mse_xl",
                         "SwinFIR4x6_fft_l1_xl",
+                        "DRCT-l_12x6_325k_l1_xl",
+                        "DRCTFIR-l_12x6_215k_l1_xl"
                     ],
                 ),
             },
@@ -172,6 +181,26 @@ class SudoLatentUpscale:
                     upsampler="pixelshuffle",
                     resi_connection="SFB",
                 )
+
+            # 27.4M
+            if version == "DRCT-l_12x6_325k_l1_xl":
+                self.model = drct(
+                in_chans=4,
+                depths=(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6), # 12x6
+                num_heads=(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),
+                upscale=2,
+                resi_connection="1conv"
+            )
+
+            # 27.9M
+            if version == "DRCTFIR-l_12x6_215k_l1_xl":
+                self.model = drct(
+                in_chans=4,
+                depths=(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6), # 12x6
+                num_heads=(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),
+                upscale=2,
+                resi_connection="SFB"
+            )
 
             self.model.load_state_dict(state_dict)
             self.model.to(self.dtype)
