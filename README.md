@@ -1,9 +1,14 @@
 # ComfyUI-sudo-latent-upscale
 
 This took heavy inspriration from [city96/SD-Latent-Upscaler](https://github.com/city96/SD-Latent-Upscaler) and [Ttl/ComfyUi_NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale). Directly upscaling inside the latent space. 
-Some models are for 1.5 and some models are for SDXL. All models are trained for drawn content. Might add new architectures or update models at some point. I recommend the SwinFIR models.
+Some models are for 1.5 and some models are for SDXL. All models are trained for drawn content. Might add new architectures or update models at some point. I recommend the SwinFIR or DRCT models.
 
+1.5 comparison:
 ![comparison](https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale/assets/51405565/9bae2125-9ffd-482c-aca5-023ab1e304b4)
+
+SDXL comparison:
+
+![comparison](https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale/assets/51405565/74f7faeb-1afb-45ee-a979-f4a30cb3617b)
 
 First row is upscaled rgb image from rgb models before being used in vae encode or vae decoded image for latent models, second row final output after second KSampler.
 
@@ -17,9 +22,9 @@ a self-made 4-channel latent classification network as a feature extractor. Trai
 
 Similar settings got applied to [CRAFT](https://github.com/AVC2-UESTC/CRAFT-SR) and I trained with batch size 16. I did not finetune CRAFT with contextual loss yet.
 
-I then tried to train [SwinFIR](https://github.com/Zdafeng/SwinFIR). Prodigy with 1 and 0.1 caused massive instability, so I used Lamb with 3e-4, batch size 150, bf16 and MSE with 0.08. Final model was trained on 2x4090 with ddp and gloo, 100k steps each gpu.
+I then tried to train [SwinFIR](https://github.com/Zdafeng/SwinFIR) for 1.5. Prodigy with 1 and 0.1 caused massive instability, so I used Lamb with 3e-4, batch size 150, bf16 and MSE with 0.08. Final model was trained on 2x4090 with ddp and gloo, 100k steps each gpu.Prodigy with 1 and 0.1 caused massive instability, so I used Lamb with 3e-4, batch size 150, bf16 and MSE with 0.08. Final model was trained on 2x4090 with ddp and gloo, 100k steps each gpu.
 
-For SDXL, I used Prodigy with 0.1, batch 140 and bf16. One model was trained with MSE and the other was trained with FFT and L1. Used weight 1 everywhere.
+For the SwinFIR SDXL models, I used Prodigy with 0.1, batch 140 and bf16. One model was trained with MSE and the other was trained with FFT and L1. Used weight 1 everywhere. Afterwards I trained some [DRCT](https://github.com/ming053l/DRCT) models with AdamW 1e-4, bf16, batch size 40 and 0.08 l1. Training DRCT took around 35gb vram.
 
 ### Further Ideas
 Ideas I might test in the future:
@@ -27,6 +32,7 @@ Ideas I might test in the future:
 - Huber
 - Different Conv2D (for example MBConv)
 - Dropout prior to final conv
+- Using normal image space as additional input or during training as loss with vae decode
 
 ### Failure cases
 - 4 channel ssim on output latents. Only remains as positive loss if `nonnegative_ssim=True` gets set in `pytorch_msssim`, but model does not seem to train properly then.
