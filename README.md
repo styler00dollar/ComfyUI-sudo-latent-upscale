@@ -12,26 +12,61 @@ SDXL comparison:
 First row is upscaled rgb image from rgb models before being used in vae encode or vae decoded image for latent models, second row final output after second KSampler.
 
 ## Training Details
-I tried to take promising networks from already existing papers and apply more exotic loss functions. The final [DAT](https://github.com/LeapLabTHU/DAT) model used a 4-channel 
-[EfficientnetV2-b0](https://github.com/huggingface/pytorch-image-models/blob/main/timm/models/efficientnet.py) as a discriminator, [Prodigy optimizer](https://pytorch-optimizers.readthedocs.io/en/latest/optimizer/#pytorch_optimizer.Prodigy)
-with 0.1, bf16, L1 loss with a factor of 0.08 and batch size 32 for the normal model and 16 for the large model. Training takes around 22-24gb vram and was done on a 4090. I did not try 
-vae decode inside training a lot, but if someone wants to train with it, use `torch.inference_mode()` to drastically reduce vram usage since vae does not get trained anyway. After training 
-with a discriminator and l1, I applied [contextual loss](https://github.com/styler00dollar/Colab-traiNNer/blob/a8d97b4826c01d7b206e7a320156d8666db1efd2/code/loss/loss.py#L715) which used 
+I tried to take promising networks from already existing papers and apply more exotic loss functions. 
+
+- [DAT12x6_l1_eV2-b0_contextual_315k_1.5 / DAT6x6_l1_eV2-b0_265k_1.5](https://github.com/LeapLabTHU/DAT)
+  - 4 channel [EfficientnetV2-b0](https://github.com/huggingface/pytorch-image-models/blob/main/timm/models/efficientnet.py) as a discriminator
+  - [Prodigy](https://pytorch-optimizers.readthedocs.io/en/latest/optimizer/#pytorch_optimizer.Prodigy) with 0.1
+  - bf16
+  - batch size 32 for the normal model and 16 for the large model
+  - L1 with 0.08 weight
+  - ~22-24gb vram
+
+- [CRAFT7x6_l1_eV2-b0_150k_1.5](https://github.com/AVC2-UESTC/CRAFT-SR)
+  - Similar settings
+  - batch size 16
+  
+- [DAT12x6_l1_eV2-b0_contextual_315k_1.5](https://github.com/LeapLabTHU/DAT)
+  - Same as previous DAT, but with [contextual loss](https://github.com/styler00dollar/Colab-traiNNer/blob/a8d97b4826c01d7b206e7a320156d8666db1efd2/code/loss/loss.py#L715) which used 
 a self-made 4-channel latent classification network as a feature extractor. Training with contextual loss from scratch takes too long to converge, so I only used it at the very end. I can't really recommend the usage of contextual loss though.
 
-Similar settings got applied to [CRAFT](https://github.com/AVC2-UESTC/CRAFT-SR) and I trained with batch size 16. I did not finetune CRAFT with contextual loss yet.
+- [SwinFIR4x6_mse_200k_1.5](https://github.com/Zdafeng/SwinFIR)
+  - [lamb](https://github.com/cybertronai/pytorch-lamb/blob/5ef3ebd5e32f7a7bdcddbb2ce55879bfa88f6a5f/pytorch_lamb/lamb.py) with 3e-4
+  - bf16
+  - batch size 150
+  - MSE with 0.08 weight
+  - model was trained on 2x4090 with ddp and gloo, 100k steps each gpu
 
-I then tried to train [SwinFIR](https://github.com/Zdafeng/SwinFIR) for 1.5. Prodigy with 1 and 0.1 caused massive instability, so I used Lamb with 3e-4, batch size 150, bf16 and MSE with 0.08. Final model was trained on 2x4090 with ddp and gloo, 100k steps each gpu.Prodigy with 1 and 0.1 caused massive instability, so I used Lamb with 3e-4, batch size 150, bf16 and MSE with 0.08. Final model was trained on 2x4090 with ddp and gloo, 100k steps each gpu.
+- [SwinFIR4x6_fft_l1_94k_sdxl / SwinFIR4x6_mse_64k_sdxl](https://github.com/Zdafeng/SwinFIR)
+  - [Prodigy](https://pytorch-optimizers.readthedocs.io/en/latest/optimizer/#pytorch_optimizer.Prodigy) with 0.1
+  - bf16
+  - batch size 140
+  - One model was trained with MSE and the other was trained with FFT and L1 with weight 1 everywhere
 
-For the SwinFIR SDXL models, I used Prodigy with 0.1, batch 140 and bf16. One model was trained with MSE and the other was trained with FFT and L1. Used weight 1 everywhere. Afterwards I trained some [DRCT](https://github.com/ming053l/DRCT) models with AdamW 1e-4, bf16, batch size 40 and 0.08 l1. Training DRCT took around 35gb vram.
+- [DRCT-l_12x6_325k_l1_sdxl / DRCTFIR-l_12x6_215k_l1_sdxl](https://github.com/ming053l/DRCT)
+  - AdamW 1e-4
+  - bf16
+  - batch size 40
+  - l1 with weight 0.08
+  - ~35gb vram
+
+- [DRCT-l_12x6_160k_l1_vaeDecode_l1_hfen_sdxl](https://github.com/ming053l/DRCT)
+  - used DRCT-l_12x6_325k_l1_sdxl as pretrain
+  - AdamW 1e-4
+  - bf16
+  - batch size 3, because training with vae gradients requires a lot of vram
+  - l1 with weight 0.1
+  - [vae decode loss similar to nnlatent](https://github.com/Ttl/ComfyUi_NNLatentUpscale/blob/08105da31dbd7a54569661e135835e73bd8064b0/latent_resizer_train.py#L115) (HFEN with weight 0.1 and l1 with weight 1 on decoded image)
+  - ~22gb vram
+
+- [DRCT-l_12x6_170k_l1_vaeDecode_l1_fft_sdxl](https://github.com/ming053l/DRCT)
+  - similar to prior, but with [fft loss](https://github.com/styler00dollar/Colab-traiNNer/blob/ebb5e8cc83ebe6250b76d39fa9cd725b02e33710/code/loss/loss.py#L425) with weight 1
 
 ### Further Ideas
 Ideas I might test in the future:
-- MSE
 - Huber
 - Different Conv2D (for example MBConv)
 - Dropout prior to final conv
-- Using normal image space as additional input or during training as loss with vae decode
 
 ### Failure cases
 - 4 channel ssim on output latents. Only remains as positive loss if `nonnegative_ssim=True` gets set in `pytorch_msssim`, but model does not seem to train properly then.
