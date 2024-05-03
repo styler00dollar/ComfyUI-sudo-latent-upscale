@@ -47,6 +47,16 @@ class SudoLatentUpscale:
             "DRCTFIR-l_12x6_215k_l1_xl": os.path.join(
                 self.local_dir, self.path, "DRCTFIR-l_12x6_215k_l1_sdxl.pth"
             ),
+            "DRCT-l_12x6_160k_l1_vaeDecode_l1_hfen_xl": os.path.join(
+                self.local_dir,
+                self.path,
+                "DRCT-l_12x6_160k_l1_vaeDecode_l1_hfen_sdxl.pth",
+            ),
+            "DRCT-l_12x6_170k_l1_vaeDecode_l1_fft_xl": os.path.join(
+                self.local_dir,
+                self.path,
+                "DRCT-l_12x6_170k_l1_vaeDecode_l1_fft_sdxl.pth",
+            ),
         }
         self.version = "none"
 
@@ -76,7 +86,9 @@ class SudoLatentUpscale:
                         "SwinFIR4x6_mse_xl",
                         "SwinFIR4x6_fft_l1_xl",
                         "DRCT-l_12x6_325k_l1_xl",
-                        "DRCTFIR-l_12x6_215k_l1_xl"
+                        "DRCTFIR-l_12x6_215k_l1_xl",
+                        "DRCT-l_12x6_160k_l1_vaeDecode_l1_hfen_xl",
+                        "DRCT-l_12x6_170k_l1_vaeDecode_l1_fft_xl",
                     ],
                 ),
             },
@@ -159,7 +171,11 @@ class SudoLatentUpscale:
                 )
 
             # 3.8 M
-            if version in ["SwinFIR4x6_mse_1.5", "SwinFIR4x6_mse_xl", "SwinFIR4x6_fft_l1_xl"]:
+            if version in [
+                "SwinFIR4x6_mse_1.5",
+                "SwinFIR4x6_mse_xl",
+                "SwinFIR4x6_fft_l1_xl",
+            ]:
                 self.model = SwinFIR(
                     patch_size=1,
                     in_chans=4,
@@ -183,24 +199,28 @@ class SudoLatentUpscale:
                 )
 
             # 27.4M
-            if version == "DRCT-l_12x6_325k_l1_xl":
+            if version in [
+                "DRCT-l_12x6_325k_l1_xl",
+                "DRCT-l_12x6_160k_l1_vaeDecode_l1_hfen_xl",
+                "DRCT-l_12x6_170k_l1_vaeDecode_l1_fft_xl",
+            ]:
                 self.model = drct(
-                in_chans=4,
-                depths=(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6), # 12x6
-                num_heads=(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),
-                upscale=2,
-                resi_connection="1conv"
-            )
+                    in_chans=4,
+                    depths=(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),  # 12x6
+                    num_heads=(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),
+                    upscale=2,
+                    resi_connection="1conv",
+                )
 
             # 27.9M
             if version == "DRCTFIR-l_12x6_215k_l1_xl":
                 self.model = drct(
-                in_chans=4,
-                depths=(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6), # 12x6
-                num_heads=(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),
-                upscale=2,
-                resi_connection="SFB"
-            )
+                    in_chans=4,
+                    depths=(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),  # 12x6
+                    num_heads=(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6),
+                    upscale=2,
+                    resi_connection="SFB",
+                )
 
             self.model.load_state_dict(state_dict)
             self.model.to(self.dtype)
