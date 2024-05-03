@@ -56,7 +56,7 @@ a self-made 4-channel latent classification network as a feature extractor. Trai
   - bf16
   - batch size 3, because training with vae gradients requires a lot of vram
   - l1 with weight 0.1
-  - [vae decode loss similar to nnlatent](https://github.com/Ttl/ComfyUi_NNLatentUpscale/blob/08105da31dbd7a54569661e135835e73bd8064b0/latent_resizer_train.py#L115) (HFEN with weight 0.1 and l1 with weight 1 on decoded image)
+  - [vae decode loss similar to nnlatent](https://github.com/Ttl/ComfyUi_NNLatentUpscale/blob/08105da31dbd7a54569661e135835e73bd8064b0/latent_resizer_train.py#L115) ([HFEN](https://github.com/styler00dollar/Colab-traiNNer/blob/ebb5e8cc83ebe6250b76d39fa9cd725b02e33710/code/loss/loss.py#L129) with weight 0.1 and l1 with weight 1 on decoded image)
   - ~22gb vram
 
 - [DRCT-l_12x6_170k_l1_vaeDecode_l1_fft_sdxl](https://github.com/ming053l/DRCT)
