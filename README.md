@@ -69,7 +69,7 @@ Ideas I might test in the future:
 - Dropout prior to final conv
 
 ### Failure cases
-- 4 channel ssim on output latents. Only remains as positive loss if `nonnegative_ssim=True` gets set in `pytorch_msssim`, but model does not seem to train properly then.
+- Any kind of SSIM introduces instability. I tried to do 4 channel SSIM and MS-SSIM, also SSIM on vae decoded image and nothing works. `nonnegative_ssim=True` does not seem to help as well. Avoid SSIM to retain stability.
 - Using `vae.config.scaling_factor = 0.13025` (do not set a scaling factor, [nnlatent used it](https://github.com/Ttl/ComfyUi_NNLatentUpscale/blob/08105da31dbd7a54569661e135835e73bd8064b0/latent_resizer_train.py#L248) and city96 didn't, I do not recommend to use it), image range 0 to 1 (image tensor is supposed to be -1 to 1 prior to encoding with vae) and not using `torch.inference_mode()` while creating the dataset. A combination of these can make training a lot less stable, even if loss goes down during training and does seemingly converge, the final model won't be able to generate properly. Here is a correct example:
 ```python
 vae = AutoencoderKL.from_single_file("vae.pt").to(device)
