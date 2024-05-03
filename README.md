@@ -7,8 +7,7 @@ Some models are for 1.5 and some models are for SDXL. All models are trained for
 ![comparison](https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale/assets/51405565/9bae2125-9ffd-482c-aca5-023ab1e304b4)
 
 SDXL comparison:
-
-![comparison](https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale/assets/51405565/74f7faeb-1afb-45ee-a979-f4a30cb3617b)
+![comparison](https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale/assets/51405565/bf86ad0b-442c-46c1-9ad0-cfb6d55a7963)
 
 First row is upscaled rgb image from rgb models before being used in vae encode or vae decoded image for latent models, second row final output after second KSampler.
 
