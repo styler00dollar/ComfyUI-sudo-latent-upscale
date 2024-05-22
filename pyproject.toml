@@ -1,0 +1,15 @@
+[project]
+name = "comfyui-sudo-latent-upscale"
+description = "Directly upscaling inside the latent space. Model was trained for SD1.5 and drawn content. Might add new architectures or update models at some point. This took heavy inspriration from [city96/SD-Latent-Upscaler](https://github.com/city96/SD-Latent-Upscaler) and [Ttl/ComfyUi_NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale). "
+version = "1.0.0"
+license = "LICENSE"
+dependencies = ["wget", "timm"]
+
+[project.urls]
+Repository = "https://github.com/styler00dollar/ComfyUI-sudo-latent-upscale"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI-sudo-latent-upscale"
+Icon = ""
